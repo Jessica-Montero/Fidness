@@ -1,0 +1,1 @@
+Fidness es una aplicación de escritorio desarrollada en Java que permite gestionar rutinas de ejercicio de manera sencilla. El proyecto está orientado a facilitar la organización de ejercicios y rutinas de entrenamiento, mediante una interfaz gráfica intuitiva.
