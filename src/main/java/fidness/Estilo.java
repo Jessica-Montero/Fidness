@@ -22,9 +22,18 @@ public class Estilo {
     public static final Color BLANCO = Color.WHITE;
     public static final Color MORADO = new Color(100, 65, 140);
     public static final Color GRIS = new Color(230, 230, 230);
+    public static final Color FILA    = new Color(0xFDF7F2);
 
     public static void configurarBoton(JButton boton) {
         boton.setBackground(NARANJA);
+        boton.setForeground(NEGRO);
+        boton.setFont(new Font("Arial", Font.BOLD, 13));
+        boton.setFocusPainted(false);
+        boton.setOpaque(true);
+    }
+    
+    public static void configurarBotonGris(JButton boton) {
+        boton.setBackground(GRIS);
         boton.setForeground(NEGRO);
         boton.setFont(new Font("Arial", Font.BOLD, 13));
         boton.setFocusPainted(false);

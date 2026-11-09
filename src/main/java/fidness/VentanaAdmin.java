@@ -8,6 +8,7 @@ package fidness;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
@@ -21,31 +22,25 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 public class VentanaAdmin extends JFrame {
 
     private Administrador administrador;
     private Repositorio repo;
+    private JPanel panelEjercicios;
 
-    private JList<Ejercicio> listaEjercicios;
-    private JTextField txtNombre;
-    private JTextArea txtDescripcion;
-    private JTextArea txtInstrucciones;
-    private JComboBox<TipoEjercicio> cmbTipo;
-
-    public VentanaAdmin(Administrador administrador, Repositorio repo) {
+    public VentanaAdmin(
+            Administrador administrador,
+            Repositorio repo) {
 
         this.administrador = administrador;
         this.repo = repo;
 
-        setTitle("Fidness - Administración de ejercicios");
+        setTitle("Fidness - Administrar ejercicios");
         setSize(1050, 620);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -56,6 +51,7 @@ public class VentanaAdmin extends JFrame {
 
         // Barra superior degradada
         JPanel barraSuperior = new JPanel() {
+
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -74,7 +70,9 @@ public class VentanaAdmin extends JFrame {
         barraSuperior.setPreferredSize(new Dimension(1050, 18));
 
         // Panel izquierdo: marca Fidness
-        JPanel panelIzquierdo = new JPanel(new BorderLayout(5, 10));
+        JPanel panelIzquierdo = new JPanel(
+                new BorderLayout(5, 10));
+
         panelIzquierdo.setBackground(Estilo.BLANCO);
         panelIzquierdo.setBorder(
                 BorderFactory.createEmptyBorder(20, 10, 20, 10));
@@ -99,7 +97,9 @@ public class VentanaAdmin extends JFrame {
         panelTextos.add(tituloMarca);
         panelTextos.add(subtitulo);
 
-        JLabel imagenLogo = new JLabel("", SwingConstants.CENTER);
+        // Cargar logotipo
+        JLabel imagenLogo = new JLabel(
+                "", SwingConstants.CENTER);
 
         java.net.URL recurso = getClass().getResource(
                 "/logofidnes.png");
@@ -114,6 +114,7 @@ public class VentanaAdmin extends JFrame {
             imagenLogo.setIcon(new ImageIcon(imagen));
 
         } else {
+
             imagenLogo.setText("FIDNESS");
             imagenLogo.setForeground(Estilo.NARANJA);
         }
@@ -121,193 +122,221 @@ public class VentanaAdmin extends JFrame {
         panelIzquierdo.add(panelTextos, BorderLayout.NORTH);
         panelIzquierdo.add(imagenLogo, BorderLayout.CENTER);
 
-        // Panel derecho: administración
+        // Panel derecho
         JPanel panelDerecho = new JPanel(
-                new BorderLayout(8, 10));
+                new BorderLayout(10, 15));
 
         panelDerecho.setBackground(Estilo.BLANCO);
         panelDerecho.setBorder(
-                BorderFactory.createEmptyBorder(20, 15, 20, 15));
+                BorderFactory.createEmptyBorder(25, 30, 25, 30));
 
         JLabel titulo = new JLabel(
-                "Administración de ejercicios",
+                "ADMINISTRAR EJERCICIOS",
                 SwingConstants.CENTER);
 
         Estilo.configurarTitulo(titulo);
 
-        // Lista de ejercicios
-        listaEjercicios = new JList<>();
+        JLabel etiquetaEjercicios = new JLabel(
+                "Ejercicios disponibles");
+
+        etiquetaEjercicios.setFont(
+                new Font("Arial", Font.BOLD, 16));
+
+        etiquetaEjercicios.setForeground(Estilo.NEGRO);
+
+        // Panel que contiene los ejercicios
+        panelEjercicios = new JPanel();
+
+        panelEjercicios.setLayout(
+                new javax.swing.BoxLayout(
+                        panelEjercicios,
+                        javax.swing.BoxLayout.Y_AXIS));
+
+        panelEjercicios.setBackground(Estilo.BLANCO);
+
         actualizarLista();
 
-        JPanel panelLista = new JPanel(new BorderLayout(5, 6));
+        JScrollPane scrollEjercicios = new JScrollPane(
+                panelEjercicios);
+
+        scrollEjercicios.setBorder(
+                BorderFactory.createEmptyBorder());
+
+        // Sección de ejercicios disponibles
+        JPanel panelLista = new JPanel(
+                new BorderLayout(5, 10));
+
         panelLista.setBackground(Estilo.BLANCO);
-
-        JLabel etiquetaLista = new JLabel("Ejercicios registrados");
-        etiquetaLista.setFont(new Font("Arial", Font.BOLD, 14));
-        etiquetaLista.setForeground(Estilo.NEGRO);
-
-        panelLista.add(etiquetaLista, BorderLayout.NORTH);
         panelLista.add(
-                new JScrollPane(listaEjercicios),
+                etiquetaEjercicios,
+                BorderLayout.NORTH);
+
+        panelLista.add(
+                scrollEjercicios,
                 BorderLayout.CENTER);
 
-        // Formulario
-        JPanel panelFormulario = new JPanel(
-                new GridLayout(4, 2, 8, 8));
-
-        panelFormulario.setBackground(Estilo.BLANCO);
-
-        txtNombre = new JTextField();
-        txtDescripcion = new JTextArea(3, 15);
-        txtInstrucciones = new JTextArea(3, 15);
-        cmbTipo = new JComboBox<>(TipoEjercicio.values());
-
-        Estilo.configurarCampo(txtNombre);
-        Estilo.configurarAreaTexto(txtDescripcion);
-        Estilo.configurarAreaTexto(txtInstrucciones);
-
-        panelFormulario.add(new JLabel("Nombre:"));
-        panelFormulario.add(txtNombre);
-
-        panelFormulario.add(new JLabel("Descripción:"));
-        panelFormulario.add(new JScrollPane(txtDescripcion));
-
-        panelFormulario.add(new JLabel("Instrucciones:"));
-        panelFormulario.add(new JScrollPane(txtInstrucciones));
-
-        panelFormulario.add(new JLabel("Categoría:"));
-        panelFormulario.add(cmbTipo);
-
-        // Distribución de lista y formulario
-        JPanel panelContenido = new JPanel(
-                new GridLayout(1, 2, 12, 0));
-
-        panelContenido.setBackground(Estilo.BLANCO);
-        panelContenido.add(panelLista);
-        panelContenido.add(panelFormulario);
-
-        // Botones
-        JButton btnRegistrar = new JButton("Registrar");
-        JButton btnModificar = new JButton("Modificar");
-        JButton btnEliminar = new JButton("Eliminar");
-        JButton btnLimpiar = new JButton("Limpiar");
-        JButton btnCerrarSesion = new JButton("Cerrar sesión");
+        // Botón registrar ejercicio
+        JButton btnRegistrar = new JButton(
+                "REGISTRAR EJERCICIO");
 
         Estilo.configurarBoton(btnRegistrar);
-        Estilo.configurarBoton(btnModificar);
-        Estilo.configurarBoton(btnEliminar);
-        Estilo.configurarBoton(btnLimpiar);
-        Estilo.configurarBoton(btnCerrarSesion);
 
-        btnRegistrar.addActionListener(e -> registrarEjercicio());
-        btnModificar.addActionListener(e -> modificarEjercicio());
-        btnEliminar.addActionListener(e -> eliminarEjercicio());
-        btnLimpiar.addActionListener(e -> limpiarCampos());
-        btnCerrarSesion.addActionListener(e -> cerrarSesion());
+        btnRegistrar.setPreferredSize(
+                new Dimension(230, 45));
 
-        JPanel panelBotones = new JPanel(
-                new GridLayout(1, 5, 6, 6));
+        btnRegistrar.addActionListener(e -> abrirRegistro());
 
-        panelBotones.setBackground(Estilo.BLANCO);
+        JPanel panelRegistro = new JPanel(
+                new FlowLayout(FlowLayout.CENTER));
 
-        panelBotones.add(btnRegistrar);
-        panelBotones.add(btnModificar);
-        panelBotones.add(btnEliminar);
-        panelBotones.add(btnLimpiar);
-        panelBotones.add(btnCerrarSesion);
+        panelRegistro.setBackground(Estilo.BLANCO);
+        panelRegistro.add(btnRegistrar);
 
-        listaEjercicios.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                cargarEjercicioSeleccionado();
-            }
-        });
+        // Botón cerrar sesión
+        JButton btnCerrarSesion = new JButton(
+                "↪ Cerrar sesión");
+
+        Estilo.configurarBotonGris(btnCerrarSesion);
+
+        btnCerrarSesion.addActionListener(
+                e -> cerrarSesion());
+
+        JPanel panelCerrarSesion = new JPanel(
+                new FlowLayout(FlowLayout.RIGHT));
+
+        panelCerrarSesion.setBackground(Estilo.BLANCO);
+        panelCerrarSesion.add(btnCerrarSesion);
+
+        // Parte inferior
+        JPanel panelInferior = new JPanel(
+                new BorderLayout());
+
+        panelInferior.setBackground(Estilo.BLANCO);
+        panelInferior.add(
+                panelRegistro,
+                BorderLayout.CENTER);
+
+        panelInferior.add(
+                panelCerrarSesion,
+                BorderLayout.SOUTH);
 
         panelDerecho.add(titulo, BorderLayout.NORTH);
-        panelDerecho.add(panelContenido, BorderLayout.CENTER);
-        panelDerecho.add(panelBotones, BorderLayout.SOUTH);
+        panelDerecho.add(panelLista, BorderLayout.CENTER);
+        panelDerecho.add(panelInferior, BorderLayout.SOUTH);
 
         // Distribución general
-        JPanel contenido = new JPanel(new GridLayout(1, 2));
-        contenido.setBackground(Estilo.BLANCO);
+        JPanel contenido = new JPanel(
+                new GridLayout(1, 2));
 
+        contenido.setBackground(Estilo.BLANCO);
         contenido.add(panelIzquierdo);
         contenido.add(panelDerecho);
 
-        panelPrincipal.add(barraSuperior, BorderLayout.NORTH);
-        panelPrincipal.add(contenido, BorderLayout.CENTER);
+        panelPrincipal.add(
+                barraSuperior,
+                BorderLayout.NORTH);
+
+        panelPrincipal.add(
+                contenido,
+                BorderLayout.CENTER);
 
         add(panelPrincipal);
     }
 
     private void actualizarLista() {
 
+        panelEjercicios.removeAll();
+
         ArrayList<Ejercicio> ejercicios = repo.getEjercicios();
 
-        listaEjercicios.setListData(
-                ejercicios.toArray(new Ejercicio[0]));
+        for (Ejercicio ejercicio : ejercicios) {
+
+            // Información del ejercicio
+            JPanel panelFila = new JPanel(
+                    new BorderLayout(10, 5));
+
+            panelFila.setBackground(Estilo.BLANCO);
+            panelFila.setBorder(
+                    BorderFactory.createEmptyBorder(12, 8, 12, 8));
+
+            JLabel informacion = new JLabel(
+                    "<html><b>"
+                    + ejercicio.getNombre()
+                    + "</b><br>"
+                    + ejercicio.getTipo()
+                    + "</html>");
+
+            informacion.setFont(
+                    new Font("Arial", Font.PLAIN, 14));
+
+            // Botones de cada ejercicio
+            JButton btnModificar = new JButton("Modificar");
+            JButton btnEliminar = new JButton("Eliminar");
+
+            Estilo.configurarBotonGris(btnModificar);
+            Estilo.configurarBotonGris(btnEliminar);
+
+            btnModificar.addActionListener(
+                    e -> modificarEjercicio(ejercicio));
+
+            btnEliminar.addActionListener(
+                    e -> eliminarEjercicio(ejercicio));
+
+            JPanel panelBotones = new JPanel(
+                    new FlowLayout(FlowLayout.RIGHT, 8, 0));
+
+            panelBotones.setBackground(Estilo.BLANCO);
+            panelBotones.add(btnModificar);
+            panelBotones.add(btnEliminar);
+
+            panelFila.add(
+                    informacion,
+                    BorderLayout.CENTER);
+
+            panelFila.add(
+                    panelBotones,
+                    BorderLayout.EAST);
+
+            panelEjercicios.add(panelFila);
+
+            // Línea divisora
+            JPanel linea = new JPanel();
+
+            linea.setBackground(Estilo.GRIS);
+            linea.setMaximumSize(
+                    new Dimension(Integer.MAX_VALUE, 1));
+
+            panelEjercicios.add(linea);
+        }
+
+        panelEjercicios.revalidate();
+        panelEjercicios.repaint();
     }
 
-    private void registrarEjercicio() {
+    private void abrirRegistro() {
 
-        try {
+        VentanaRegistrarEjercicio ventana =
+                new VentanaRegistrarEjercicio(
+                        administrador,
+                        repo,
+                        () -> actualizarLista());
 
-            Ejercicio ejercicio = new Ejercicio(
-                    0,
-                    txtNombre.getText(),
-                    txtDescripcion.getText(),
-                    txtInstrucciones.getText(),
-                    (TipoEjercicio) cmbTipo.getSelectedItem());
-
-            administrador.registrarEjercicio(repo, ejercicio);
-
-            actualizarLista();
-            limpiarCampos();
-
-            Estilo.mostrarMensaje(
-                    "Ejercicio registrado correctamente.");
-
-        } catch (FidnessException e) {
-            Estilo.mostrarError(e.getMessage());
-        }
+        ventana.setVisible(true);
     }
 
-    private void modificarEjercicio() {
+    private void modificarEjercicio(Ejercicio seleccionado) {
 
-        Ejercicio seleccionado = listaEjercicios.getSelectedValue();
-
-        if (seleccionado == null) {
-            Estilo.mostrarError("Seleccione un ejercicio.");
-            return;
-        }
-
-        try {
-
-            administrador.modificarEjercicio(
+    VentanaModificarEjercicio ventana =
+            new VentanaModificarEjercicio(
+                    administrador,
                     repo,
-                    seleccionado.getIdEjercicio(),
-                    txtNombre.getText(),
-                    txtDescripcion.getText(),
-                    txtInstrucciones.getText(),
-                    (TipoEjercicio) cmbTipo.getSelectedItem());
+                    seleccionado,
+                    () -> actualizarLista());
 
-            actualizarLista();
+    ventana.setVisible(true);
+}
 
-            Estilo.mostrarMensaje(
-                    "Ejercicio modificado correctamente.");
-
-        } catch (FidnessException e) {
-            Estilo.mostrarError(e.getMessage());
-        }
-    }
-
-    private void eliminarEjercicio() {
-
-        Ejercicio seleccionado = listaEjercicios.getSelectedValue();
-
-        if (seleccionado == null) {
-            Estilo.mostrarError("Seleccione un ejercicio.");
-            return;
-        }
+    private void eliminarEjercicio(Ejercicio seleccionado) {
 
         int respuesta = JOptionPane.showConfirmDialog(
                 this,
@@ -320,39 +349,19 @@ public class VentanaAdmin extends JFrame {
             try {
 
                 administrador.eliminarEjercicio(
-                        repo, seleccionado.getIdEjercicio());
+                        repo,
+                        seleccionado.getIdEjercicio());
 
                 actualizarLista();
-                limpiarCampos();
 
-                Estilo.mostrarMensaje("Ejercicio eliminado.");
+                Estilo.mostrarMensaje(
+                        "Ejercicio eliminado correctamente.");
 
             } catch (FidnessException e) {
+
                 Estilo.mostrarError(e.getMessage());
             }
         }
-    }
-
-    private void cargarEjercicioSeleccionado() {
-
-        Ejercicio seleccionado = listaEjercicios.getSelectedValue();
-
-        if (seleccionado != null) {
-
-            txtNombre.setText(seleccionado.getNombre());
-            txtDescripcion.setText(seleccionado.getDescripcion());
-            txtInstrucciones.setText(seleccionado.getInstrucciones());
-            cmbTipo.setSelectedItem(seleccionado.getTipo());
-        }
-    }
-
-    private void limpiarCampos() {
-
-        txtNombre.setText("");
-        txtDescripcion.setText("");
-        txtInstrucciones.setText("");
-        listaEjercicios.clearSelection();
-        cmbTipo.setSelectedIndex(0);
     }
 
     private void cerrarSesion() {

@@ -9,13 +9,13 @@ package fidness;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
-import java.awt.RenderingHints;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -32,6 +32,9 @@ public class VentanaLogin extends JFrame {
     private JTextField txtUsuario;
     private JPasswordField txtContraseña;
     private JButton btnIngresar;
+    private JButton btnCancelar;
+    private JButton btnAdmin;
+    private JButton btnClt;
 
     public VentanaLogin(Repositorio repo) {
 
@@ -86,6 +89,7 @@ public class VentanaLogin extends JFrame {
 
         subtitulo.setForeground(Estilo.NEGRO);
         subtitulo.setFont(new Font("Arial", Font.PLAIN, 17));
+
         JPanel panelTextos = new JPanel(
                 new GridLayout(2, 1, 5, 5));
 
@@ -96,10 +100,10 @@ public class VentanaLogin extends JFrame {
 
         // Cargar logotipo
         JLabel imagenLogo = new JLabel(
-        "", SwingConstants.CENTER);
+                "", SwingConstants.CENTER);
 
         java.net.URL recurso = getClass().getResource(
-                "/logofidnes.png"); 
+                "/logofidnes.png");
 
         if (recurso != null) {
 
@@ -163,11 +167,92 @@ public class VentanaLogin extends JFrame {
         Estilo.configurarBoton(btnIngresar);
 
         btnIngresar.setPreferredSize(
-                new Dimension(180, 40));
+                new Dimension(140, 40));
 
         btnIngresar.addActionListener(
                 e -> iniciarSesion());
 
+        // Botón cancelar
+        btnCancelar = new JButton("Cancelar");
+        Estilo.configurarBotonGris(btnCancelar);
+
+        btnCancelar.setPreferredSize(
+                new Dimension(140, 40));
+
+        btnCancelar.addActionListener(
+                e -> dispose());
+
+        // Contenedor de botones
+        JPanel panelBotones = new JPanel(
+                new FlowLayout(FlowLayout.CENTER, 10, 0));
+
+        panelBotones.setBackground(Estilo.BLANCO);
+        panelBotones.add(btnIngresar);
+        panelBotones.add(btnCancelar);
+        
+        
+        // Quitar
+        btnAdmin = new JButton("Iniciar sesión admin");
+        Estilo.configurarBoton(btnAdmin);
+
+        btnAdmin.setPreferredSize(
+                new Dimension(140, 40));
+
+        btnAdmin.addActionListener(
+                e -> inicioAdmin());
+        panelIzquierdo.add(btnAdmin, BorderLayout.NORTH);
+        
+        btnClt = new JButton("Iniciar sesión clt");
+        Estilo.configurarBoton(btnClt);
+
+        btnClt.setPreferredSize(
+                new Dimension(140, 40));
+
+        btnClt.addActionListener(
+                e -> inicioClt());
+        panelIzquierdo.add(btnClt, BorderLayout.SOUTH);
+        
+        //fin quitar
+
+        // Credenciales de acceso para el profesor
+        JPanel panelCredenciales = new JPanel(
+                new GridLayout(2, 1, 3, 3));
+
+        panelCredenciales.setBackground(Estilo.BLANCO);
+
+        JLabel tituloCredenciales = new JLabel(
+                "Credenciales de acceso para pruebas",
+                SwingConstants.CENTER);
+
+        tituloCredenciales.setFont(
+                new Font("Arial", Font.BOLD, 12));
+
+        tituloCredenciales.setForeground(Estilo.MORADO);
+
+        JLabel textoCredenciales = new JLabel(
+                "<html><center>"
+                + "Administrador: admin / admin123"
+                + "<br>Cliente: cliente / cliente123"
+                + "</center></html>",
+                SwingConstants.CENTER);
+
+        textoCredenciales.setFont(
+                new Font("Arial", Font.PLAIN, 12));
+
+        textoCredenciales.setForeground(Color.GRAY);
+
+        panelCredenciales.add(tituloCredenciales);
+        panelCredenciales.add(textoCredenciales);
+
+        // Contenedor inferior: botones y credenciales
+        JPanel panelInferior = new JPanel(
+                new BorderLayout(5, 12));
+
+        panelInferior.setBackground(Estilo.BLANCO);
+        panelInferior.add(panelBotones, BorderLayout.NORTH);
+        panelInferior.add(panelCredenciales, BorderLayout.SOUTH);
+
+        // Agregar componentes al panel derecho
         panelDerecho.add(
                 tituloLogin, BorderLayout.NORTH);
 
@@ -175,7 +260,7 @@ public class VentanaLogin extends JFrame {
                 panelCampos, BorderLayout.CENTER);
 
         panelDerecho.add(
-                btnIngresar, BorderLayout.SOUTH);
+                panelInferior, BorderLayout.SOUTH);
 
         // Distribución de las dos secciones
         JPanel contenido = new JPanel(
@@ -202,6 +287,42 @@ public class VentanaLogin extends JFrame {
 
         Usuario usuarioEncontrado =
                 repo.autenticar(usuario, contraseña);
+
+        if (usuarioEncontrado == null) {
+
+            Estilo.mostrarError(
+                    "Usuario o contraseña incorrectos.");
+
+        } else {
+
+            dispose();
+
+            JFrame menu = usuarioEncontrado.abrirMenu(repo);
+            menu.setVisible(true);
+        }
+    }
+    
+    private void inicioAdmin(){
+        Usuario usuarioEncontrado =
+                repo.autenticar("admin", "admin123");
+
+        if (usuarioEncontrado == null) {
+
+            Estilo.mostrarError(
+                    "Usuario o contraseña incorrectos.");
+
+        } else {
+
+            dispose();
+
+            JFrame menu = usuarioEncontrado.abrirMenu(repo);
+            menu.setVisible(true);
+        }
+    }
+    
+    private void inicioClt(){
+        Usuario usuarioEncontrado =
+                repo.autenticar("cliente", "cliente123");
 
         if (usuarioEncontrado == null) {
 
