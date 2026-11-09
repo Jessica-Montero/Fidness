@@ -1,0 +1,12 @@
+RUTINA: completo
+
+Ejercicio: Sentadillas
+Tipo: PIERNA
+Descripción: Ejercicio para fortalecer las piernas.
+Instrucciones: Colocarse de pie, flexionar las rodillas y regresar.
+
+Ejercicio: Remo sentado
+Tipo: ESPALDA
+Descripción: Ejercicio para fortalecer la espalda
+Instrucciones: Sentarse frente a la máquina y tirar del agarre hacia el torso
+
