@@ -76,7 +76,7 @@ public class VentanaRegistrarEjercicio extends JFrame {
 
         barraSuperior.setPreferredSize(new Dimension(950, 18));
 
-        // Panel izquierdo: marca Fidness
+        // Panel izquierdo
         JPanel panelIzquierdo = new JPanel(
                 new BorderLayout(10, 20));
 
@@ -129,7 +129,7 @@ public class VentanaRegistrarEjercicio extends JFrame {
         panelIzquierdo.add(panelTextos, BorderLayout.NORTH);
         panelIzquierdo.add(imagenLogo, BorderLayout.CENTER);
 
-        // Panel derecho: formulario de registro
+        // Panel derecho
         JPanel panelDerecho = new JPanel(
                 new BorderLayout(15, 20));
 

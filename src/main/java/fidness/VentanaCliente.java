@@ -25,6 +25,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -57,7 +58,7 @@ public class VentanaCliente extends JFrame {
     private JComboBox<String> cmbFiltro;
     private JComboBox<Rutina> cmbRutinas;
     private JTextField txtNombreRutina;
-    private JTextArea txtDetalle;
+    private JEditorPane txtDetalle;
     private JLabel lblNombreDetalle;
 
     private Rutina rutinaActual;
@@ -83,7 +84,7 @@ public class VentanaCliente extends JFrame {
         drawer.setBackground(Estilo.BLANCO);
         drawer.setBorder(new MatteBorder(0, 0, 0, 1, Estilo.GRIS));
         drawer.setPreferredSize(new Dimension(235, 0));
-        drawer.setVisible(false);
+        drawer.setVisible(true);
         crearDrawer();
         add(drawer, BorderLayout.WEST);
 
@@ -104,7 +105,7 @@ public class VentanaCliente extends JFrame {
         cards.show(contenido, CATALOGO);
     }
 
-    // Panel de identidad visual fijo, compartido por las tres pantallas.
+    // Panel de identidad visual, compartido por las pantallas.
     private JPanel crearPanelMarca() {
         JPanel marca = new JPanel(new BorderLayout(5, 12));
         marca.setBackground(Estilo.BLANCO);
@@ -164,7 +165,7 @@ public class VentanaCliente extends JFrame {
             revalidate();
             repaint();
         });
-
+        
         JLabel titulo = new JLabel("FIDNESS", SwingConstants.CENTER);
         titulo.setFont(new Font("SansSerif", Font.BOLD, 20));
         titulo.setForeground(Estilo.BLANCO);
@@ -227,7 +228,7 @@ public class VentanaCliente extends JFrame {
     private void navegar(String destino) {
         if (RUTINAS.equals(destino)) actualizarComboRutinas();
         cards.show(contenido, destino);
-        drawer.setVisible(false);
+        drawer.setVisible(true);
         revalidate();
         repaint();
     }
@@ -255,7 +256,7 @@ public class VentanaCliente extends JFrame {
                 if (seleccionado != null) ejercicioActual = seleccionado;
             }
         });
-        // Doble clic sobre un ejercicio del catálogo.
+        
         configurarDobleClickDetalle(listaEjercicios, CATALOGO);
 
         JButton ver = botonAccion("Ver instrucciones", Estilo.MORADO);
@@ -279,36 +280,64 @@ public class VentanaCliente extends JFrame {
 
     private JPanel crearPantallaDetalle() {
         JPanel panel = pantallaBase();
-        panel.add(tituloPantalla("DETALLE DEL EJERCICIO"), BorderLayout.NORTH);
+        JPanel columna = new JPanel(new BorderLayout(0, 16));
+        columna.setOpaque(false);
+        columna.setPreferredSize(new Dimension(520, 0));
 
-        JPanel contenidoDetalle = new JPanel(new BorderLayout(8, 12));
-        contenidoDetalle.setOpaque(false);
-        contenidoDetalle.setBorder(new EmptyBorder(22, 10, 20, 10));
+        JLabel titulo = tituloPantalla("DETALLE DEL EJERCICIO");
+        titulo.setHorizontalAlignment(SwingConstants.LEFT);
+        titulo.setFont(new Font("Arial", Font.BOLD, 16));
+        titulo.setBorder(BorderFactory.createCompoundBorder(
+                new MatteBorder(0, 0, 1, 0, Estilo.GRIS),
+                new EmptyBorder(0, 0, 10, 0)));
 
+        // Nombre del ejercicio
         lblNombreDetalle = new JLabel("Seleccione un ejercicio", SwingConstants.LEFT);
-        lblNombreDetalle.setFont(new Font("Arial", Font.BOLD, 15));
+        lblNombreDetalle.setFont(new Font("Arial", Font.BOLD, 11));
         lblNombreDetalle.setForeground(Estilo.NEGRO);
+        lblNombreDetalle.setBorder(new EmptyBorder(8, 0, 0, 0));
 
-        txtDetalle = new JTextArea();
+        txtDetalle = new JEditorPane();
+        txtDetalle.setContentType("text/html");
         txtDetalle.setEditable(false);
-        txtDetalle.setLineWrap(true);
-        txtDetalle.setWrapStyleWord(true);
-        txtDetalle.setFont(new Font("Arial", Font.PLAIN, 13));
-        txtDetalle.setForeground(Estilo.NEGRO);
         txtDetalle.setBackground(Estilo.BLANCO);
-        txtDetalle.setBorder(new EmptyBorder(8, 0, 8, 0));
+        txtDetalle.setBorder(new EmptyBorder(0, 0, 0, 0));
 
-        contenidoDetalle.add(lblNombreDetalle, BorderLayout.NORTH);
-        contenidoDetalle.add(new JScrollPane(txtDetalle), BorderLayout.CENTER);
+        JScrollPane scroll = new JScrollPane(txtDetalle);
+        scroll.setBorder(null);
+        scroll.getViewport().setBackground(Estilo.BLANCO);
 
-        JButton volver = botonAccion("Volver", Estilo.MORADO);
+        JPanel cuerpo = new JPanel(new BorderLayout(0, 14));
+        cuerpo.setOpaque(false);
+        cuerpo.add(lblNombreDetalle, BorderLayout.NORTH);
+        cuerpo.add(scroll, BorderLayout.CENTER);
+
+        JLabel leyenda = new JLabel("Detalle del ejercicio");
+        leyenda.setFont(new Font("Arial", Font.PLAIN, 11));
+        leyenda.setForeground(Color.GRAY);
+
+        JButton volver = new JButton("\u2190 Volver");
+        volver.setFont(new Font("Arial", Font.BOLD, 11));
+        volver.setForeground(Estilo.MORADO);
+        volver.setContentAreaFilled(false);
+        volver.setBorderPainted(false);
+        volver.setFocusPainted(false);
+        volver.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         volver.addActionListener(e -> navegar(pantallaAnterior));
-        JPanel acciones = new JPanel(new BorderLayout());
-        acciones.setOpaque(false);
-        acciones.add(volver, BorderLayout.WEST);
 
-        panel.add(contenidoDetalle, BorderLayout.CENTER);
-        panel.add(acciones, BorderLayout.SOUTH);
+        JPanel pieDetalle = new JPanel(new BorderLayout());
+        pieDetalle.setOpaque(false);
+        pieDetalle.setBorder(BorderFactory.createCompoundBorder(
+                new MatteBorder(1, 0, 0, 0, Estilo.GRIS),
+                new EmptyBorder(10, 0, 0, 0)));
+        pieDetalle.add(leyenda, BorderLayout.WEST);
+        pieDetalle.add(volver, BorderLayout.EAST);
+
+        columna.add(titulo, BorderLayout.NORTH);
+        columna.add(cuerpo, BorderLayout.CENTER);
+        columna.add(pieDetalle, BorderLayout.SOUTH);
+
+        panel.add(columna, BorderLayout.WEST);
         return panel;
     }
 
@@ -351,7 +380,6 @@ public class VentanaCliente extends JFrame {
         configurarListaEjercicios(listaDisponiblesRutina);
         listaDisponiblesRutina.setVisibleRowCount(2);
 
-        // Doble clic sobre un ejercicio disponible.
         configurarDobleClickDetalle(listaDisponiblesRutina, RUTINAS);
         cuerpo.add(new JScrollPane(listaDisponiblesRutina));
 
@@ -374,7 +402,6 @@ public class VentanaCliente extends JFrame {
         configurarListaEjercicios(listaRutina);
         listaRutina.setVisibleRowCount(2);
         
-        // Doble clic sobre un ejercicio que ya pertenece a la rutina.
         configurarDobleClickDetalle(listaRutina, RUTINAS);
 
         cuerpo.add(new JScrollPane(listaRutina));
@@ -510,10 +537,6 @@ public class VentanaCliente extends JFrame {
         }
     }
 
-    /**
-     * Permite abrir el detalle haciendo doble clic en cualquiera
-     * de las listas que muestran ejercicios.
-     */
     private void configurarDobleClickDetalle(
             JList<Ejercicio> lista, String pantallaOrigen) {
 
@@ -527,7 +550,6 @@ public class VentanaCliente extends JFrame {
 
                 int indice = lista.locationToIndex(e.getPoint());
 
-                // Evita abrir el detalle al hacer doble clic en un espacio vacío.
                 if (indice >= 0) {
                     java.awt.Rectangle fila = lista.getCellBounds(indice, indice);
 
@@ -553,12 +575,54 @@ public class VentanaCliente extends JFrame {
         pantallaAnterior = origen;
 
         lblNombreDetalle.setText(seleccionado.getNombre());
-        txtDetalle.setText("Tipo de ejercicio\\n" + seleccionado.getTipo()
-                + "\\n\\nDescripción\\n" + seleccionado.getDescripcion()
-                + "\\n\\nInstrucciones\\n" + seleccionado.getInstrucciones());
+        txtDetalle.setText(construirHtmlDetalle(seleccionado));
         txtDetalle.setCaretPosition(0);
 
         navegar(DETALLE);
+    }
+
+    private String construirHtmlDetalle(Ejercicio ejercicio) {
+        StringBuilder html = new StringBuilder();
+        html.append("<html><body style='font-family:Arial; font-size:11pt; margin:0'>");
+
+        html.append("<b>Tipo de ejercicio</b><br>")
+            .append(escapar(String.valueOf(ejercicio.getTipo())))
+            .append("<br><br>");
+
+        html.append("<b>Descripción</b><br>")
+            .append(escapar(ejercicio.getDescripcion()).replace("\n", "<br>"))
+            .append("<br><br>");
+
+        html.append("<b>Instrucciones</b>");
+        html.append("<ol style='margin-top:2px; margin-bottom:0px'>");
+        for (String paso : dividirInstrucciones(ejercicio.getInstrucciones())) {
+            html.append("<li>").append(escapar(paso)).append("</li>");
+        }
+        html.append("</ol>");
+
+        html.append("</body></html>");
+        return html.toString();
+    }
+
+    private ArrayList<String> dividirInstrucciones(String texto) {
+        ArrayList<String> pasos = new ArrayList<>();
+        if (texto == null) return pasos;
+
+        for (String linea : texto.split("\\R")) {
+            String limpia = linea.trim().replaceFirst("^\\d+\\s*[.)\\-]\\s*", "");
+            if (!limpia.isEmpty()) pasos.add(limpia);
+        }
+
+        if (pasos.size() == 1) {
+            String[] frases = pasos.get(0).split("(?<=[.!?])\\s+");
+            if (frases.length > 1) {
+                pasos.clear();
+                for (String frase : frases) {
+                    if (!frase.trim().isEmpty()) pasos.add(frase.trim());
+                }
+            }
+        }
+        return pasos;
     }
 
     private void crearRutina() {

@@ -92,7 +92,7 @@ public class VentanaModificarEjercicio extends JFrame {
 
         barraSuperior.setPreferredSize(new Dimension(950, 18));
 
-        // Panel izquierdo de identidad
+        // Panel izquierdo
         JPanel panelIzquierdo = new JPanel(
                 new BorderLayout(10, 20));
 

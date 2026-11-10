@@ -33,8 +33,6 @@ public class VentanaLogin extends JFrame {
     private JPasswordField txtContraseña;
     private JButton btnIngresar;
     private JButton btnCancelar;
-    private JButton btnAdmin;
-    private JButton btnClt;
 
     public VentanaLogin(Repositorio repo) {
 
@@ -190,30 +188,6 @@ public class VentanaLogin extends JFrame {
         panelBotones.add(btnIngresar);
         panelBotones.add(btnCancelar);
         
-        
-        // Quitar
-        btnAdmin = new JButton("Iniciar sesión admin");
-        Estilo.configurarBoton(btnAdmin);
-
-        btnAdmin.setPreferredSize(
-                new Dimension(140, 40));
-
-        btnAdmin.addActionListener(
-                e -> inicioAdmin());
-        panelIzquierdo.add(btnAdmin, BorderLayout.NORTH);
-        
-        btnClt = new JButton("Iniciar sesión clt");
-        Estilo.configurarBoton(btnClt);
-
-        btnClt.setPreferredSize(
-                new Dimension(140, 40));
-
-        btnClt.addActionListener(
-                e -> inicioClt());
-        panelIzquierdo.add(btnClt, BorderLayout.SOUTH);
-        
-        //fin quitar
-
         // Credenciales de acceso para el profesor
         JPanel panelCredenciales = new JPanel(
                 new GridLayout(2, 1, 3, 3));
@@ -287,42 +261,6 @@ public class VentanaLogin extends JFrame {
 
         Usuario usuarioEncontrado =
                 repo.autenticar(usuario, contraseña);
-
-        if (usuarioEncontrado == null) {
-
-            Estilo.mostrarError(
-                    "Usuario o contraseña incorrectos.");
-
-        } else {
-
-            dispose();
-
-            JFrame menu = usuarioEncontrado.abrirMenu(repo);
-            menu.setVisible(true);
-        }
-    }
-    
-    private void inicioAdmin(){
-        Usuario usuarioEncontrado =
-                repo.autenticar("admin", "admin123");
-
-        if (usuarioEncontrado == null) {
-
-            Estilo.mostrarError(
-                    "Usuario o contraseña incorrectos.");
-
-        } else {
-
-            dispose();
-
-            JFrame menu = usuarioEncontrado.abrirMenu(repo);
-            menu.setVisible(true);
-        }
-    }
-    
-    private void inicioClt(){
-        Usuario usuarioEncontrado =
-                repo.autenticar("cliente", "cliente123");
 
         if (usuarioEncontrado == null) {
 
